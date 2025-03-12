@@ -565,6 +565,23 @@ spark-sql --conf spark.sql.catalog.my_catalog=org.apache.iceberg.spark.SparkCata
 
 For more details on using S3 Acceleration, please refer to [Configuring fast, secure file transfers using Amazon S3 Transfer Acceleration](https://docs.aws.amazon.com/AmazonS3/latest/userguide/transfer-acceleration.html).
 
+### S3 Analytics Accelerator
+
+The [Analytics Accelerator Library for Amazon S3](https://github.com/awslabs/analytics-accelerator-s3) helps you accelerate access to Amazon S3 data from your applications. This open-source solution reduces processing times and compute costs for your data analytics workloads.
+
+In order to enable S3 Analytics Accelerator Library to work in Iceberg, you can set the `s3.analytics-accelerator.enabled` catalog property to `true`. By default, this property is set to `false`.
+
+For example, to use S3 Analytics Accelerator with Spark 3.5, you can start the Spark SQL shell with:
+```
+spark-sql --conf spark.sql.catalog.my_catalog=org.apache.iceberg.spark.SparkCatalog \
+    --conf spark.sql.catalog.my_catalog.warehouse=s3://my-bucket2/my/key/prefix \
+    --conf spark.sql.catalog.my_catalog.type=glue \
+    --conf spark.sql.catalog.my_catalog.io-impl=org.apache.iceberg.aws.s3.S3FileIO \
+    --conf spark.sql.catalog.my_catalog.s3.analytics-accelerator.enabled=true
+```
+
+For additional configuration options, you can use properties prefixed with `s3.analytics-accelerator.`. For more details, please refer to [S3 Analytics Accelerator Configuration](https://github.com/awslabs/analytics-accelerator-s3/blob/main/doc/CONFIGURATION.md).
+
 ### S3 Dual-stack
 
 [S3 Dual-stack](https://docs.aws.amazon.com/AmazonS3/latest/userguide/dual-stack-endpoints.html) allows a client to access an S3 bucket through a dual-stack endpoint. 
