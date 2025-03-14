@@ -21,10 +21,16 @@ package org.apache.iceberg.aws.s3;
 import java.util.Map;
 import org.apache.iceberg.aws.AwsClientProperties;
 import org.apache.iceberg.aws.HttpClientProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.crt.Log;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
 
 class DefaultS3FileIOAwsClientFactory implements S3FileIOAwsClientFactory {
+
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultS3FileIOAwsClientFactory.class);
+
   private S3FileIOProperties s3FileIOProperties;
   private HttpClientProperties httpClientProperties;
   private AwsClientProperties awsClientProperties;
@@ -63,6 +69,11 @@ class DefaultS3FileIOAwsClientFactory implements S3FileIOAwsClientFactory {
   @Override
   public S3AsyncClient s3Async() {
     if (s3FileIOProperties.isS3CRTEnabled()) {
+      String home = System.getProperty("user.home");
+      LOG.info("HOME at {}", home);
+      String path = System.getProperty("user.home") + "/crt.log";
+      LOG.info("PATH AT {}", path);
+      Log.initLoggingToFile(Log.LogLevel.Trace, path);
       return S3AsyncClient.crtBuilder()
           .applyMutation(awsClientProperties::applyClientRegionConfiguration)
           .applyMutation(awsClientProperties::applyClientCredentialConfigurations)

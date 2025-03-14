@@ -24,6 +24,8 @@ import org.apache.iceberg.aws.s3.S3FileIOProperties;
 import org.apache.iceberg.common.DynConstructors;
 import org.apache.iceberg.relocated.com.google.common.base.Strings;
 import org.apache.iceberg.util.PropertyUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
@@ -31,6 +33,7 @@ import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsSyncClientBuilder;
 import software.amazon.awssdk.core.client.builder.SdkClientBuilder;
+import software.amazon.awssdk.crt.Log;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
@@ -45,6 +48,8 @@ import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.services.s3.S3Configuration;
 
 public class AwsClientFactories {
+
+  private static final Logger LOG = LoggerFactory.getLogger(AwsClientFactories.class);
 
   private static final DefaultAwsClientFactory AWS_CLIENT_FACTORY_DEFAULT =
       new DefaultAwsClientFactory();
@@ -122,6 +127,11 @@ public class AwsClientFactories {
     @Override
     public S3AsyncClient s3Async() {
       if (s3FileIOProperties.isS3CRTEnabled()) {
+        String home = System.getProperty("user.home");
+        LOG.info("HOME at {}", home);
+        String path = System.getProperty("user.home") + "/crt.log";
+        LOG.info("PATH AT {}", path);
+        Log.initLoggingToFile(Log.LogLevel.Trace, path);
         return S3AsyncClient.crtBuilder()
             .applyMutation(awsClientProperties::applyClientRegionConfiguration)
             .applyMutation(awsClientProperties::applyClientCredentialConfigurations)

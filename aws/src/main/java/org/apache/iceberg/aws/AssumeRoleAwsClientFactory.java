@@ -22,8 +22,11 @@ import java.util.Map;
 import java.util.UUID;
 import org.apache.iceberg.aws.s3.S3FileIOProperties;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.awscore.client.builder.AwsSyncClientBuilder;
+import software.amazon.awssdk.crt.Log;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.glue.GlueClient;
@@ -37,6 +40,8 @@ import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 
 public class AssumeRoleAwsClientFactory implements AwsClientFactory {
+  private static final Logger LOG = LoggerFactory.getLogger(AssumeRoleAwsClientFactory.class);
+
   private AwsProperties awsProperties;
   private HttpClientProperties httpClientProperties;
   private S3FileIOProperties s3FileIOProperties;
@@ -58,6 +63,11 @@ public class AssumeRoleAwsClientFactory implements AwsClientFactory {
   @Override
   public S3AsyncClient s3Async() {
     if (s3FileIOProperties.isS3CRTEnabled()) {
+      String home = System.getProperty("user.home");
+      LOG.info("HOME at {}", home);
+      String path = System.getProperty("user.home") + "/crt.log";
+      LOG.info("PATH AT {}", path);
+      Log.initLoggingToFile(Log.LogLevel.Trace, path);
       return S3AsyncClient.crtBuilder()
           .applyMutation(this::applyAssumeRoleConfigurations)
           .applyMutation(awsClientProperties::applyClientRegionConfiguration)
