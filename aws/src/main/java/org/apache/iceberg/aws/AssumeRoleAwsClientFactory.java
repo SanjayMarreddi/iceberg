@@ -67,7 +67,7 @@ public class AssumeRoleAwsClientFactory implements AwsClientFactory {
       LOG.info("HOME at {}", home);
       String path = System.getProperty("user.home") + "/crt.log";
       LOG.info("PATH AT {}", path);
-      Log.initLoggingToFile(Log.LogLevel.Trace, path);
+      Log.initLoggingToFile(Log.LogLevel.Debug, path);
       return S3AsyncClient.crtBuilder()
           .applyMutation(this::applyAssumeRoleConfigurations)
           .applyMutation(awsClientProperties::applyClientRegionConfiguration)

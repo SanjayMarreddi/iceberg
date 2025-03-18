@@ -131,7 +131,7 @@ public class AwsClientFactories {
         LOG.info("HOME at {}", home);
         String path = System.getProperty("user.home") + "/crt.log";
         LOG.info("PATH AT {}", path);
-        Log.initLoggingToFile(Log.LogLevel.Trace, path);
+        Log.initLoggingToFile(Log.LogLevel.Debug, path);
         return S3AsyncClient.crtBuilder()
             .applyMutation(awsClientProperties::applyClientRegionConfiguration)
             .applyMutation(awsClientProperties::applyClientCredentialConfigurations)
