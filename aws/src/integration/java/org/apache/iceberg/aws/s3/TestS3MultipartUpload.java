@@ -35,6 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
 
 /** Long-running tests to ensure multipart upload logic is resilient */
@@ -49,6 +50,7 @@ public class TestS3MultipartUpload {
 
   private final Random random = new Random(1);
   private static S3Client s3;
+  private static S3AsyncClient s3Async;
   private static String bucketName;
   private static String prefix;
   private static S3FileIOProperties properties;
@@ -58,12 +60,13 @@ public class TestS3MultipartUpload {
   @BeforeAll
   public static void beforeClass() {
     s3 = AwsClientFactories.defaultFactory().s3();
+    s3Async = AwsClientFactories.defaultFactory().s3Async();
     bucketName = AwsIntegTestUtil.testBucketName();
     prefix = UUID.randomUUID().toString();
     properties = new S3FileIOProperties();
     properties.setMultiPartSize(S3FileIOProperties.MULTIPART_SIZE_MIN);
     properties.setChecksumEnabled(true);
-    io = new S3FileIO(() -> s3, properties);
+    io = new S3FileIO(() -> s3, () -> s3Async, properties);
   }
 
   @AfterAll
