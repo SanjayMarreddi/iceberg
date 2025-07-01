@@ -278,11 +278,9 @@ public class TestS3InputStream {
 
       in.readVectored(ranges, allocate);
 
-
       ByteBuffer buffer1 = future1.get();
       ByteBuffer buffer2 = future2.get();
       ByteBuffer buffer3 = future3.get();
-
 
       assertThat(future1.isDone()).isTrue();
       assertThat(future2.isDone()).isTrue();
