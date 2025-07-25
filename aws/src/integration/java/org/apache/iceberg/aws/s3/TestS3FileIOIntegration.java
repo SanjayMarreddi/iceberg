@@ -281,7 +281,7 @@ public class TestS3FileIOIntegration {
     s3FileIO.initialize(mergeProperties(aalProperties, accessPointProperties));
     validateRead(s3FileIO);
   }
-  
+
   @ParameterizedTest
   @MethodSource("org.apache.iceberg.aws.s3.S3TestUtil#analyticsAcceleratorLibraryProperties")
   public void testNewInputStreamWithMultiRegionAccessPoint(Map<String, String> aalProperties)
